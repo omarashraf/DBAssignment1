@@ -1,0 +1,7 @@
+Employee,Name,java.lang.String,FALSE,FALSE,null
+Employee,ID,java.lang.Integer,TRUE,FALSE,null
+Employee,Start_Date,java.util.Date,FALSE,FALSE,null
+Employee,Country,java.util.String,FALSE,FALSE,null
+Kellner,Datum,java.util.Date,FALSE,FALSE,null
+Kellner,Vorname,java.lang.String,FALSE,FALSE,null
+Kellner,id,java.lang.Integer,TRUE,FALSE,null
