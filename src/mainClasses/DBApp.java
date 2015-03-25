@@ -1,5 +1,7 @@
 package mainClasses;
 
+import indexing.indexCreation;
+
 import java.io.BufferedReader;
 import java.io.EOFException;
 import java.io.FileInputStream;
@@ -45,9 +47,9 @@ public class DBApp {
 		tableManipulation.createTable.createTable(strTableName, htblColNameType, htblColNameRefs, strKeyColName);
 	}
 	
-	public void createIndex(String strTableName, String strColName) throws DBAppException
+	public static void createIndex(String strTableName, String strColName) throws DBAppException
 	{
-		
+		indexCreation.createIndex(strTableName, strColName);
 	}
 	
 		
@@ -110,6 +112,8 @@ public class DBApp {
 		//h3.put("Stadt", "java.util.String");
 		//createTable("Kellner", h3, h2, "id");
 		
+		createIndex("Kellner", "Vorname");
+		
 		Hashtable h4 = new Hashtable();
 		h4.put("ID", "1");
 		h4.put("Name", "ahmed");
@@ -126,12 +130,12 @@ public class DBApp {
 		h5.put("Country", "egypt");
 		
 		
-		insertIntoTable("Employee", h4);
-		insertIntoTable("Employee", h5);
+		//insertIntoTable("Employee", h4);
+		//insertIntoTable("Employee", h5);
 		
-		Record y = new Record("","");
+		/*Record y = new Record("","");
 		List<Record> x = insertion.retrieve();
-		y.printList(x);
+		y.printList(x);*/
 		
 	}
 	
