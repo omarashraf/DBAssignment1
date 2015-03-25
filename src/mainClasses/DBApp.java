@@ -17,6 +17,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
+import tableManipulation.Record;
 import tableManipulation.insertion;
 
 import com.sun.corba.se.impl.io.OptionalDataException;
@@ -117,8 +118,20 @@ public class DBApp {
 		h4.put("Country", "egypt");
 		
 		
-		//insertIntoTable("Employee", h4);
-		//insertion.retrieve();
+		Hashtable h5 = new Hashtable();
+		h5.put("ID", "2");
+		h5.put("Name", "ahmed2");
+		h5.put("Dept", "cs2");
+		h5.put("Start_Date", "january");
+		h5.put("Country", "egypt");
+		
+		
+		insertIntoTable("Employee", h4);
+		insertIntoTable("Employee", h5);
+		
+		Record y = new Record("","");
+		List<Record> x = insertion.retrieve();
+		y.printList(x);
 		
 	}
 	

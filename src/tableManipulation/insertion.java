@@ -1,6 +1,8 @@
 package tableManipulation;
 
 import java.io.BufferedReader;
+import java.io.EOFException;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -11,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import Exceptions.DBAppException;
 
@@ -100,7 +103,7 @@ public class insertion {
 	
 	public static void insertIntoTable(String strTableName, Hashtable<String, String> htblColNameValue) 
 	throws DBAppException, IOException
-	// still need to check if the value inserted is of the same type as the column, 
+	// still need to prevent duplicating keys, 
 	// and set the max number of records in a file
 	// search for a way to keep track of each record inserted to be able to retrieve it 
 	{
@@ -113,6 +116,21 @@ public class insertion {
 	    Enumeration e1 = htblColNameValue.keys();
 		List<String> Colname = new ArrayList();
 		List<String> Value = new ArrayList();
+		
+		ObjectOutputStream out = null;
+		
+		try 
+			{
+			File file = new File(serFile);
+			if (!file.exists()) {
+			FileOutputStream fileOut = new FileOutputStream(serFile,true);
+			out = new ObjectOutputStream(fileOut);
+			}
+			else {
+				FileOutputStream fileOut = new FileOutputStream(serFile,true);
+				out = new AppendingObjectOutputStream(fileOut);
+			}
+		
 		while (e1.hasMoreElements()) 
 			{
 				String key = (String) e1.nextElement();
@@ -123,51 +141,52 @@ public class insertion {
 				  }
 			      Colname.add(key);
 			      Value.add(htblColNameValue.get(key));
+			      Record x = new Record(key,htblColNameValue.get(key));
+			      out.writeObject(x);
 		    }
-		try 
-		{
-		FileOutputStream fileOut = new FileOutputStream(serFile,true);
-		ObjectOutputStream out = new ObjectOutputStream(fileOut);
-		 for (int i = 0; i < Colname.size(); i++)
-    	{
-			out.writeObject(Colname.get(i));
-			out.writeObject(Value.get(i));
-    	}
-		 out.close();
-		 fileOut.close();
+		
+			} catch (IOException ioException) {
+		        ioException.printStackTrace();
+		      } catch (NoSuchElementException noSuchElementException) {
+		         System.err.println("Invalid input.");
+		      } finally {
+		         try {
+		            if (out != null)
+		               out.close();
+		         } catch (IOException ioException) {
+		            System.err.println("Error closing file.");
+		         }
+		      }
 		}
-		catch(IOException i)
-	      {
-	          i.printStackTrace();
-	      }
 		
-	}
-	}
-	public static void retrieve() throws IOException, ClassNotFoundException{
 		
-	         
-	         String Colname = ""; 
-	         ObjectInputStream in = null;
-	         try {
-	        	 FileInputStream fileIn = new FileInputStream(serFile);
-		         in = new ObjectInputStream(fileIn);
-	         while(true) 
-	     	{
-	        	 
-	        		 Colname = (String)in.readObject();
-	 	 			System.out.println(Colname);
-	        	 
-	     	}
-	         }
-	         catch (Exception e) {
-	        	 
-	        		 System.out.println("File is Empty");
-	         }
-	         finally {
-	         
-	        	 if (in != null)
-	                 in.close();
-	         }
-	 }
 	
+	}
+	
+	public static List<Record> retrieve() {
+		List<Record> list= new ArrayList<Record>();
+		ObjectInputStream inputStream = null;
+		try {
+	         inputStream = new ObjectInputStream(new FileInputStream(serFile));
+	         while (true) {
+	        	 
+	             Record r = (Record) inputStream.readObject();
+	             list.add(r);
+	          }
+	       } catch (EOFException eofException) {
+	    	   return list;
+	       } catch (ClassNotFoundException classNotFoundException) {
+	          System.err.println("Object creation failed.");
+	       } catch (IOException e) {
+	          e.printStackTrace();
+	       } finally {
+	          try {
+	             if (inputStream != null)
+	                inputStream.close();
+	          } catch (IOException ioException) {
+	             System.err.println("Error closing file.");
+	          }
+	       }
+	       return list;
+	}
 }
